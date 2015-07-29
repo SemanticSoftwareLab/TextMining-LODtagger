@@ -1,0 +1,46 @@
+//
+// Multilingual Noun Phrase Extractor (MuNPEx)
+// http://www.semanticsoftware.info/munpex
+//
+// Helper grammar to add an HEAD_LEMMA slot with a lemmatized version
+// of the word contained in the HEAD slot using the output of the
+// Durm German Lemmatizer
+//
+// Copyright (c) 2007-2012 Rene Witte (http://rene-witte.net)
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+
+Phase: DE_NP_Lemma
+Input: NP Lemma
+Options: control = appelt
+
+Rule: DENPLemma
+Priority: 50
+(
+	{NP}
+):np1
+-->
+{
+gate.AnnotationSet npSet = (gate.AnnotationSet)bindings.get("np1");
+gate.Annotation npAnn = (gate.Annotation)npSet.iterator().next();
+FeatureMap npFeatures = npAnn.getFeatures();
+long headStart = ((Long)npFeatures.get( "HEAD_START" )).longValue();
+long headEnd = ((Long)npFeatures.get( "HEAD_END" )).longValue();
+AnnotationSet lemmas = doc.getAnnotations().get( "Lemma", headStart, headEnd );
+String lemmaStr = null;
+if( lemmas != null ) {
+    Iterator lemmaIterator = lemmas.iterator();
+    if( lemmaIterator.hasNext() ) {
+	Annotation lemma = (Annotation)lemmaIterator.next();
+	lemmaStr = (String)lemma.getFeatures().get( "Lemma" );
+    }
+}
+String npLemma = (String)npAnn.getFeatures().get( "HEAD" ).toString();
+if( lemmaStr != null && lemmaStr.length() <= npLemma.length() )
+    npLemma = lemmaStr;
+npFeatures.put( "HEAD_LEMMA", npLemma );
+}

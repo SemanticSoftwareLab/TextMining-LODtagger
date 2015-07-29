@@ -1,0 +1,19 @@
+Phase: dbpneCleaner
+Input: Token NP DBpediaLink
+Options: control = appelt
+
+Rule: NEWithinPronoun
+Priority: 10
+(
+   {DBpediaLink within Token, Token.category == PRP}
+):mention
+--> {}
+
+
+Rule: NEWithinNP
+Priority: 5
+(
+   {DBpediaLink within NP}
+):mention
+--> :mention.DBpediaNE = {URI=:mention.DBpediaLink.URI, similarityScore=:mention.DBpediaLink.similarityScore}
+

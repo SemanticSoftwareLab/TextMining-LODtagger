@@ -1,0 +1,25 @@
+//
+// Multilingual Noun Phrase Extractor (MuNPEx) -- remove temp annotations
+// http://www.semanticsoftware.info/munpex
+//
+// Copyright (c) 2005-2012 Rene Witte (http://rene-witte.net)
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+
+Phase: Clean
+Input: tempNP
+Options: control = all
+
+Rule: CleanTempAnnotations
+(
+  {tempNP}
+):temp
+-->
+{
+  AnnotationSet temp = bindings.get("temp");
+  inputAS.remove(temp.iterator().next());
+}

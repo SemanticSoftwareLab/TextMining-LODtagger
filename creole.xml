@@ -1,0 +1,5 @@
+<CREOLE-DIRECTORY ID="DBpediaTagger" VERSION="1.0" GATE-MIN="8.1"
+        DESCRIPTION="Transforms DBpedia Spotlight response to GATE annotations." HELPURL="http://www.semanticsoftware.info/lodtagger">
+     <JAR SCAN="true">DBpediaTagger.jar</JAR>
+     <JAR SCAN="true">DBpediaTaggerDemo.jar</JAR>
+</CREOLE-DIRECTORY>

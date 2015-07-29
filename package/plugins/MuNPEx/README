@@ -1,0 +1,61 @@
+Multi-Lingual Noun Phrase Extractor (MuNPEx)
+http://www.semanticsoftware.info/munpex
+
+Release 1.1, 12.02.2012
+
+Copyright (c) 2005-2012 Rene Witte (http://rene-witte.net)
+
+
+FILES
+=====
+
+MuNPEx/
+  |
+  +-- build.properties
+  |     property definitions that control the build process go in here,
+  |     in particular, make sure that gate.home points to your copy of GATE.
+  +-- build.xml
+  |     Ant build file for building the MuNPEx plugin.
+  +-- creole.xml
+  |     plugin configuration file for GATE 
+  +-- doc/
+  |     MuNPEx end-user documentation, Javadocs
+  +-- LICENSE
+  |     GNU GPL v2 License for MuNPEx
+  +-- MuNPEx_EN.jar 
+  |     JAR archive for the GATE plugin manager containing the example pipeline 
+  +-- MuNPEx.jar 
+  |     JAR archive for the GATE plugin manager containing the JAPE PR wrappers
+  +-- optional/
+  |     Optional grammars, see documentation for details
+  +-- package
+  |     Example pipeline for English 
+  +-- README
+  |     this file
+  +-- resources/
+  |     MuNPEx JAPE grammars (English, German, French, Spanish)
+  +-- src/
+        source code for JAPE wrappers (allowing to load grammars as PRs)
+
+
+QUICK START GUIDE
+=================
+For the impatient, here's the quick start guide:
+1. Start GATE (v7 or better), go to the plugin manager
+2. Install MuNPEx through the Semantic Software Lab repository
+3. Enable the new MuNPEx plugin
+4. Load the example pipeline from "Ready Made Applications"
+
+For more information, read the documentation (and the GATE user's guide).
+
+
+LICENSE
+=======
+MuNPEx is licensed under the GNU General Public License v2 (GPL2),
+see the LICENSE file or http://www.fsf.org/licensing/licenses/gpl-2.0.html
+
+
+SUPPORT
+=======
+For questions, comments, or even success reports, please post in the SSL Forum 
+http://www.semanticsoftware.info/forums/tools-resources-forum/durm-corpus-wiki-tools

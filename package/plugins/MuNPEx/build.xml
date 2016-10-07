@@ -5,7 +5,8 @@
   
    Build file for MuNPEx
    This file will allow you to build your plugin with Ant.  
-   Copyright (c) 2012-2015 Rene Witte (http://rene-witte.net)
+
+   Copyright (c) 2012, 2015 Rene Witte (http://rene-witte.net)
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -29,7 +30,7 @@
   <property file="build.properties" />
 
   <!-- software revision number -->
-  <property name="release.version" value="2.0"/>
+  <property name="release.version" value="2.1beta"/>
   <property file="version.properties"/>
 
   <!--=======================================================
@@ -89,6 +90,7 @@
   
   <!--====================== Targets ============================-->
 
+  <!-- create version properties file -->
   <target name="buildprops">
     <tstamp>
       <format property="builtat" pattern="yyyy-MM-dd-HH-mm-ss" timezone="America/New_York"/>
@@ -176,7 +178,7 @@
       <sourcepath>
         <pathelement location="${src.dir}" />
       </sourcepath>
-      <link href="http://docs.oracle.com/javase/6/docs/api/" />
+      <link href="http://docs.oracle.com/javase/7/docs/api/" />
       <link href="../../../../doc/javadoc/" />
     </javadoc>
   </target>

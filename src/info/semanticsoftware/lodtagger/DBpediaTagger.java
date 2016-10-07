@@ -3,7 +3,7 @@
  *
  * This file is part of the LODtagger package.
  *
- * Copyright (c) 2015, Semantic Software Lab, http://www.semanticsoftware.info
+ * Copyright (c) 2015, 2016 Semantic Software Lab, http://www.semanticsoftware.info
  *    Rene Witte
  *    Bahar Sateli
  *
@@ -33,6 +33,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.List;
 
 import info.semanticsoftware.lodtagger.model.SpotlightResource;
@@ -51,6 +52,7 @@ import gate.creole.metadata.CreoleParameter;
 import gate.creole.metadata.CreoleResource;
 import gate.creole.metadata.RunTime;
 import gate.util.InvalidOffsetException;
+import org.apache.log4j.Logger;
 
 /**
  * This class make a web service call to a given DBpedia Spolight endpoint and
@@ -60,9 +62,12 @@ import gate.util.InvalidOffsetException;
 public class DBpediaTagger extends AbstractLanguageAnalyser implements ProcessingResource {
 
 	private static final long serialVersionUID = 1L;
+    protected static final Logger LOGGER = Logger.getLogger(DBpediaTagger.class);
 
-	private static int HTTP_OK = 200;
-
+	private static final int HTTP_OK = 200;
+	private static final int SPOTLIGHT_SUPPORT = 10;
+	private static final double SPOTLIGHT_CONFIDENCE = 0.1;
+	
 	@CreoleParameter(comment = "Output annotation name", defaultValue = "DBpediaLink")
 	@RunTime
 	private String outputAnnotationName;
@@ -73,20 +78,26 @@ public class DBpediaTagger extends AbstractLanguageAnalyser implements Processin
 
 	@CreoleParameter(comment = "Confidence", defaultValue = "0.1")
 	@RunTime
-	private Double confidence = 0.1;
+	private Double confidence = SPOTLIGHT_CONFIDENCE;
 	
 	@CreoleParameter(comment = "Support", defaultValue = "10")
 	@RunTime
-	private Integer support = 10;
+	private Integer support = SPOTLIGHT_SUPPORT;
 
 	@CreoleParameter(comment = "outputASName", defaultValue = "")
 	@RunTime
 	private String outputASName = "";
 		
+	/**
+	 * @return outputAnnotationName
+	 */
 	public final String getOutputAnnotationName() {
 		return outputAnnotationName;
 	}
 
+	/**
+	 * @param myOutputAnnotationName outputAnnotationName to set
+	 */
 	public final void setOutputAnnotationName(final String myOutputAnnotationName) {
 		this.outputAnnotationName = myOutputAnnotationName;
 	}
@@ -152,30 +163,41 @@ public class DBpediaTagger extends AbstractLanguageAnalyser implements Processin
 	}
 
 
+	/* (non-Javadoc)
+	 * @see gate.creole.AbstractProcessingResource#init()
+	 */
 	@Override
-	public gate.Resource init() throws ResourceInstantiationException {
+	public final gate.Resource init() throws ResourceInstantiationException {
 		return this;
 	}
 
+	/* (non-Javadoc)
+	 * @see gate.creole.AbstractProcessingResource#reInit()
+	 */
 	@Override
-	public void reInit() throws ResourceInstantiationException {
+	public final void reInit() throws ResourceInstantiationException {
 		init();
 	}
 
+	/* (non-Javadoc)
+	 * @see gate.creole.AbstractProcessingResource#execute()
+	 */
 	@Override
-	public void execute() throws ExecutionException {
+	public final void execute() throws ExecutionException {
 		//String docContent = gate.Utils.stringFor(document,document.getAnnotations(inputASName));
-		String docContent = document.getContent().toString();
+		final String docContent = document.getContent().toString();
 		final SpotlightResult result = callSpotlight(docContent);
 		final List<SpotlightResource> list = result.getResources();
-		AnnotationSet outputAS = document.getAnnotations(outputASName);
+		final AnnotationSet outputAS = document.getAnnotations(outputASName);
 
-		for (SpotlightResource rsrc : list) {
-			FeatureMap feats = Factory.newFeatureMap();
-			feats.put("URI", rsrc.getURI());
+		for (final SpotlightResource rsrc : list) {
+			final FeatureMap feats = Factory.newFeatureMap();
+			feats.put("URI", rsrc.getDbpediaURI());
 			feats.put("similarityScore", rsrc.getSimilarityScore());
+			final List<String> types = Arrays.asList(rsrc.getTypes().split(","));
+			feats.put("types", types); // TODO make optional run-time parameter
 			// FIXME workaround for annotations that have "null" as their actual
-			// surface form DBpedia Spotlight returns surfaceForms as unquoted strings which
+			// surface form: DBpedia Spotlight returns surfaceForms as unquoted strings which
 			// tricks Gson into parsing them as null objects
 			if (rsrc.getSurfaceForm() == null) {
 				rsrc.setSurfaceForm("null");
@@ -184,12 +206,12 @@ public class DBpediaTagger extends AbstractLanguageAnalyser implements Processin
 			try {
 				outputAS.add(rsrc.getOffset(), endOffset, getOutputAnnotationName(), feats);
 			} catch (InvalidOffsetException e) {
-				e.printStackTrace();
+				LOGGER.error(e);
 			}
 		}
 	}
 
-	private SpotlightResult callSpotlight(final String content) {
+	private SpotlightResult callSpotlight(final String content) throws ExecutionException {
 		try {
 			final URL url = new URL(endpoint);
 			final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -200,24 +222,24 @@ public class DBpediaTagger extends AbstractLanguageAnalyser implements Processin
 			final String input = "text=" + URLEncoder.encode(content, "UTF-8") + "&confidence=" + confidence + "&support" + support;
 
 			conn.setDoOutput(true);
-			DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+			final DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
 			wr.writeBytes(input);
 			wr.flush();
 			wr.close();
 
 			if (conn.getResponseCode() != HTTP_OK) {
-				throw new RuntimeException("Failed: Http error code " + conn.getResponseCode());
+				throw new ExecutionException("Failed: Http error code " + conn.getResponseCode());
 			}
 
-			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), Charset.forName("UTF-8")));
+			final BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), Charset.forName("UTF-8")));
 
 			final Gson gson = new Gson();
 			return gson.fromJson(in, SpotlightResult.class);
 			
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			LOGGER.error(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 		return null;
 	}

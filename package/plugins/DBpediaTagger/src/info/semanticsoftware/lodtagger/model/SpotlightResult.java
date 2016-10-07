@@ -3,7 +3,7 @@
  *
  * This file is part of the LODtagger package.
  *
- * Copyright (c) 2015, Semantic Software Lab, http://www.semanticsoftware.info
+ * Copyright (c) 2015, 2016 Semantic Software Lab, http://www.semanticsoftware.info
  *    Rene Witte
  *    Bahar Sateli
  *
@@ -29,6 +29,7 @@ import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
+@SuppressWarnings({"PMD.BeanMembersShouldSerialize","PMD.ImmutableField"}) // PMD doesn't understand Gson
 public class SpotlightResult {
 
 	@SerializedName("@text")
@@ -50,7 +51,7 @@ public class SpotlightResult {
 	private long support = -1;
 	
 	@SerializedName("@types")
-	private String types;
+	private transient String types;
 
 	/**
 	 * @return the text
@@ -101,8 +102,8 @@ public class SpotlightResult {
 	}
 
 	@Override
-	public String toString(){
-		StringBuffer buffer = new StringBuffer();
+	public final String toString(){
+		final StringBuffer buffer = new StringBuffer(100);
 		buffer.append("text: " + text + "\n" +
 				   "confidence: " + confidence + "\n" +
 				   "support: " + support + "\n" +

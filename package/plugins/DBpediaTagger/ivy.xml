@@ -3,7 +3,7 @@
  *
  * This file is part of the LODtagger package.
  *
- * Copyright (c) 2015, Semantic Software Lab, http://www.semanticsoftware.info
+ * Copyright (c) 2015, 2016 Semantic Software Lab, http://www.semanticsoftware.info
  *    Rene Witte
  *    Bahar Sateli
  *
@@ -24,6 +24,6 @@
 <ivy-module version="2.0">
     <info organisation="SemanticSoftware" module="DBpediaTagger"/>
     <dependencies>
-    	<dependency org="com.google.code.gson" name="gson" rev="2.3.1"/>
+    	<dependency org="com.google.code.gson" name="gson" rev="2.7"/>
     </dependencies>
 </ivy-module>

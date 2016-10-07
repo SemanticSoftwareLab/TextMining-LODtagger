@@ -261,7 +261,7 @@
               </entry>
               <entry>
                 <string>endpoint</string>
-                <string>http://spotlight.dbpedia.org/rest/annotate</string>
+                <string>http://spotlight.sztaki.hu:2222/rest/annotate</string>
               </entry>
             </localMap>
           </runtimeParams>

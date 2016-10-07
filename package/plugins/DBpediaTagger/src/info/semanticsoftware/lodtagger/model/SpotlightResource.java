@@ -3,7 +3,7 @@
  *
  * This file is part of the LODtagger package.
  *
- * Copyright (c) 2015, Semantic Software Lab, http://www.semanticsoftware.info
+ * Copyright (c) 2015, 2016 Semantic Software Lab, http://www.semanticsoftware.info
  *    Rene Witte
  *    Bahar Sateli
  *
@@ -26,10 +26,11 @@ package info.semanticsoftware.lodtagger.model;
 
 import com.google.gson.annotations.SerializedName;
 
+@SuppressWarnings({"PMD.BeanMembersShouldSerialize","PMD.ImmutableField"}) // PMD doesn't understand Gson
 public class SpotlightResource {
 
 	@SerializedName("@URI")
-	private String URI;
+	private String dbpediaURI; // NOPMD by rene on 10/7/16 5:24 PM
 
 	@SerializedName("@support")
 	private long support = -1;
@@ -50,10 +51,10 @@ public class SpotlightResource {
 	private double percentageOfSecondRank = -1;
 
 	/**
-	 * @return the uRI
+	 * @return the dbpediaURI
 	 */
-	public final String getURI() {
-		return URI;
+	public final String getDbpediaURI() {
+		return dbpediaURI;
 	}
 
 	/**
@@ -77,6 +78,10 @@ public class SpotlightResource {
 		return surfaceForm;
 	}
 	
+	/**
+	 * Set the surfaceForm.
+	 * @param input the surfaceForm to set
+	 */
 	public final void setSurfaceForm(final String input) {
 		surfaceForm = input;
 	}
@@ -103,8 +108,8 @@ public class SpotlightResource {
 	}
 	
 	@Override
-	public String toString(){
-		return "\tURI: " + URI + "\n" + 
+	public final String toString(){
+		return "\tURI: " + dbpediaURI + "\n" + 
 			   "\tsupport: " + support  + "\n" +
 			   "\ttypes: " + types  + "\n" +
 			   "\tsurfaceForm: " + surfaceForm  + "\n" +
@@ -112,5 +117,4 @@ public class SpotlightResource {
 			   "\tsimilarityScore: " + similarityScore  + "\n" +
 			   "\tpercentageOfSecondRank: " + percentageOfSecondRank + "\n";
 	}
-	
 }
